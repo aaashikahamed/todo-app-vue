@@ -19,8 +19,24 @@
   }))
 
   const addTodo = () =>{
+    if(input_content.value.trim() === '' || input_category.value === null){
+      return
+    }
 
+    todos.value.push({
+      content : input_content.value,
+      category : input_category.value,
+      done: false,
+      createdAt: new Date().getTime()
+    })
   }
+
+  // this will only work when we set our 'todos' for first time
+  watch (todos, (newVal) => {
+    localStorage.setItem('todos', JSON.stringify(newVal))
+  }), {deep: true} // "deep" will look through everything, it will loog throygh each individual array item, if anything changes inside, deep will catch it
+
+
 
   // this function will watch 'name', and if it's changes we will get 'newVal', we will set it to 'localStorage' name 
   watch(name,(newVal) => {
@@ -30,6 +46,7 @@
   // this function will get 'name value' from local storage if there is any and will assign it to name value
   onMounted(() => {
     name.value = localStorage.getItem('name') || ''
+    todos.value = JSON.parse(localStorage.getItem('todos')) || []
   })
 </script>
 
@@ -51,18 +68,21 @@
         <h4>Pick a Category</h4>
         
         <div class="options">
-          <label for="">
+          <label >
             <input type="radio" name="category" value="business" v-model="input_category">
             <span class="bubble business"></span>
             <div>Business</div>
           </label>
 
-          <label for="">
-            <input type="radio" name="category" value="business" v-model="input_category">
-            <span class="bubble business"></span>
-            <div>Business</div>
+          <label>
+            <input type="radio" name="category" value="personal" v-model="input_category">
+            <span class="bubble personal"></span>
+            <div>personal</div>
           </label>
         </div>
+
+        <input type="submit" value="Add todo">
+
       </form>
      </section>
   </main>
